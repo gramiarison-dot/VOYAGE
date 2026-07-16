@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - VoyageReservation</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ============================================
+           STYLES GLOBAUX
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f2f5;
+            overflow-x: hidden;
+        }
+
+        /* ============================================
+           SIDEBAR
+           ============================================ */
+        .admin-sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            padding: 0;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+        }
+
+        .admin-sidebar .brand {
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 20px;
+        }
+
+        .admin-sidebar .brand h3 {
+            color: #fff;
+            font-weight: 800;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .admin-sidebar .brand h3 i {
+            color: #4fc3f7;
+            margin-right: 10px;
+        }
+
+        .admin-sidebar .brand span {
+            color: #4fc3f7;
+        }
+
+        .admin-sidebar .nav {
+            padding: 0 15px;
+        }
+
+        .admin-sidebar .nav-link {
+            color: rgba(255,255,255,0.6);
+            padding: 12px 18px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .admin-sidebar .nav-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.08);
+            transform: translateX(5px);
+        }
+
+        .admin-sidebar .nav-link.active {
+            color: #fff;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .admin-sidebar .nav-link i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .admin-sidebar .nav-link .badge {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #e74c3c;
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 20px;
+        }
+
+        .admin-sidebar .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .admin-sidebar .sidebar-footer .nav-link {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.85rem;
+        }
+
+        .admin-sidebar .sidebar-footer .nav-link:hover {
+            color: #fff;
+        }
+
+        /* ============================================
+           CONTENU PRINCIPAL
+           ============================================ */
+        .admin-content {
+            margin-left: 260px;
+            padding: 25px 30px;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+        }
+
+        .page-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin: 0;
+        }
+
+        .page-header h1 i {
+            color: #667eea;
+            margin-right: 10px;
+        }
+
+        .page-header .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .page-header .header-actions .date-display {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .page-header .header-actions .btn-notification {
+            position: relative;
+            background: #fff;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .page-header .header-actions .btn-notification:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .page-header .header-actions .btn-notification .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            font-size: 0.7rem;
+            padding: 3px 7px;
+            border-radius: 50%;
+        }
+
+        /* ============================================
+           STATISTIQUES
+           ============================================ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 22px 25px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.04);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        .stat-card .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 15px;
+        }
+
+        .stat-card .stat-icon.blue { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .stat-card .stat-icon.green { background: linear-gradient(135deg, #00b894, #00cec9); }
+        .stat-card .stat-icon.orange { background: linear-gradient(135deg, #fdcb6e, #f39c12); }
+        .stat-card .stat-icon.red { background: linear-gradient(135deg, #e17055, #d63031); }
+
+        .stat-card .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1a1a2e;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .stat-card .stat-change {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .stat-card .stat-change.up { color: #00b894; background: rgba(0, 184, 148, 0.1); }
+        .stat-card .stat-change.down { color: #e17055; background: rgba(225, 112, 85, 0.1); }
+
+        /* ============================================
+           GRAPHIQUES & TABLEAUX
+           ============================================ */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+
+        .chart-card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-card .card-header h5 {
+            font-weight: 600;
+            color: #1a1a2e;
+            margin: 0;
+        }
+
+        .chart-card .card-header .btn-group .btn {
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            border-radius: 6px;
+        }
+
+        .chart-card .card-header .btn-group .btn.active {
+            background: #667eea;
+            color: #fff;
+        }
+
+        /* ============================================
+           ACTIVITÉS RÉCENTES
+           ============================================ */
+        .activities-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activities-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .activities-list::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background: rgba(102, 126, 234, 0.03);
+            padding-left: 10px;
+            border-radius: 8px;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-item .activity-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .activity-item .activity-avatar.booking { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .activity-item .activity-avatar.user { background: linear-gradient(135deg, #00b894, #00cec9); }
+        .activity-item .activity-avatar.voyage { background: linear-gradient(135deg, #fdcb6e, #f39c12); }
+        .activity-item .activity-avatar.cancel { background: linear-gradient(135deg, #e17055, #d63031); }
+
+        .activity-item .activity-content {
+            flex: 1;
+        }
+
+        .activity-item .activity-content .activity-text {
+            font-size: 0.95rem;
+            color: #2d3436;
+            margin-bottom: 2px;
+        }
+
+        .activity-item .activity-content .activity-text strong {
+            color: #1a1a2e;
+        }
+
+        .activity-item .activity-content .activity-time {
+            font-size: 0.8rem;
+            color: #b2bec3;
+        }
+
+        .activity-item .activity-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .activity-item .activity-status.confirmed { background: rgba(0, 184, 148, 0.1); color: #00b894; }
+        .activity-item .activity-status.pending { background: rgba(253, 203, 110, 0.1); color: #f39c12; }
+        .activity-item .activity-status.cancelled { background: rgba(225, 112, 85, 0.1); color: #e17055; }
+
+        /* ============================================
+           TABLEAU DES UTILISATEURS
+           ============================================ */
+        .table-container {
+            background: #fff;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.04);
+            margin-bottom: 30px;
+        }
+
+        .table-container .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table-container .table-header h5 {
+            font-weight: 600;
+            color: #1a1a2e;
+            margin: 0;
+        }
+
+        .table-container .table-header .search-box {
+            display: flex;
+            gap: 10px;
+        }
+
+        .table-container .table-header .search-box input {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .table-container .table-header .search-box input:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+        }
+
+        .table-container .table-header .search-box .btn {
+            border-radius: 10px;
+            padding: 8px 20px;
+        }
+
+        .table-container table {
+            margin-bottom: 0;
+        }
+
+        .table-container table thead th {
+            background: #f8f9fa;
+            color: #2d3436;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 12px 15px;
+            border-bottom: 2px solid #e9ecef;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table-container table tbody td {
+            padding: 12px 15px;
+            vertical-align: middle;
+            font-size: 0.9rem;
+            color: #2d3436;
+        }
+
+        .table-container table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .table-container table tbody tr:hover {
+            background: rgba(102, 126, 234, 0.04);
+        }
+
+        .table-container .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .badge-role {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-role.admin { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; }
+        .badge-role.client { background: rgba(0, 184, 148, 0.1); color: #00b894; }
+
+        .btn-action {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .btn-action:hover {
+            transform: scale(1.1);
+        }
+
+        .btn-action.edit { background: rgba(102, 126, 234, 0.1); color: #667eea; }
+        .btn-action.edit:hover { background: #667eea; color: #fff; }
+        .btn-action.delete { background: rgba(225, 112, 85, 0.1); color: #e17055; }
+        .btn-action.delete:hover { background: #e17055; color: #fff; }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .admin-sidebar {
+                width: 80px;
+            }
+            .admin-sidebar .brand h3 span,
+            .admin-sidebar .nav-link span {
+                display: none;
+            }
+            .admin-sidebar .nav-link {
+                text-align: center;
+                padding: 12px;
+            }
+            .admin-sidebar .nav-link i {
+                margin-right: 0;
+                font-size: 1.3rem;
+            }
+            .admin-content {
+                margin-left: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                width: 60px;
+            }
+            .admin-content {
+                margin-left: 60px;
+                padding: 15px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card, .chart-card, .table-container {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .stat-card:nth-child(2) { animation-delay: 0.1s; }
+        .stat-card:nth-child(3) { animation-delay: 0.2s; }
+        .stat-card:nth-child(4) { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================
+    SIDEBAR
+    ============================================ -->
+    <div class="admin-sidebar">
+        <div class="brand">
+            <h3><i class="fas fa-plane"></i><span>Voyage<span>Admin</span></span></h3>
+        </div>
+        
+        <nav class="nav flex-column">
+            <a href="dashboard.html" class="nav-link active">
+                <i class="fas fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="gestion.html" class="nav-link">
+                <i class="fas fa-ship"></i>
+                <span>Voyages</span>
+                <span class="badge" id="voyagesBadge">0</span>
+            </a>
+            <a href="gestion.html#users" class="nav-link">
+                <i class="fas fa-users"></i>
+                <span>Utilisateurs</span>
+                <span class="badge" id="usersBadge">0</span>
+            </a>
+            <a href="gestion.html#reservations" class="nav-link">
+                <i class="fas fa-ticket-alt"></i>
+                <span>Réservations</span>
+                <span class="badge" id="reservationsBadge">0</span>
+            </a>
+            <a href="gestion.html#statistiques" class="nav-link">
+                <i class="fas fa-chart-line"></i>
+                <span>Statistiques</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="../index.html" class="nav-link">
+                <i class="fas fa-arrow-left"></i>
+                <span>Retour site</span>
+            </a>
+            <a href="#" class="nav-link" id="logoutAdmin">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Déconnexion</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- ============================================
+    CONTENU PRINCIPAL
+    ============================================ -->
+    <div class="admin-content">
+
+        <!-- Header -->
+        <div class="page-header">
+            <div>
+                <h1><i class="fas fa-chart-pie"></i> Dashboard</h1>
+                <p class="text-muted mb-0">Bienvenue dans votre espace d'administration</p>
+            </div>
+            <div class="header-actions">
+                <span class="date-display" id="currentDate"></span>
+                <button class="btn-notification">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+                <div class="stat-number" id="totalUsers">0</div>
+                <div class="stat-label">Utilisateurs inscrits</div>
+                <span class="stat-change up"><i class="fas fa-arrow-up"></i> 12%</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-ticket-alt"></i></div>
+                <div class="stat-number" id="totalReservations">0</div>
+                <div class="stat-label">Réservations totales</div>
+                <span class="stat-change up"><i class="fas fa-arrow-up"></i> 8%</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange"><i class="fas fa-ship"></i></div>
+                <div class="stat-number" id="totalVoyages">0</div>
+                <div class="stat-label">Voyages disponibles</div>
+                <span class="stat-change down"><i class="fas fa-arrow-down"></i> 2%</span>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon red"><i class="fas fa-coins"></i></div>
+                <div class="stat-number" id="totalRevenue">0</div>
+                <div class="stat-label">Chiffre d'affaires</div>
+                <span class="stat-change up"><i class="fas fa-arrow-up"></i> 15%</span>
+            </div>
+        </div>
+
+        <!-- Graphiques -->
+        <div class="charts-row">
+            <div class="chart-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-line" style="color:#667eea;"></i> Réservations par mois</h5>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-outline-primary active">2026</button>
+                        <button class="btn btn-sm btn-outline-primary">2025</button>
+                    </div>
+                </div>
+                <canvas id="reservationsChart" height="250"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-doughnut" style="color:#00b894;"></i> Répartition</h5>
+                </div>
+                <canvas id="statusChart" height="250"></canvas>
+            </div>
+        </div>
+
+        <!-- Tableau des utilisateurs -->
+        <div class="table-container">
+            <div class="table-header">
+                <h5><i class="fas fa-users" style="color:#667eea;"></i> Derniers utilisateurs</h5>
+                <div class="search-box">
+                    <input type="text" placeholder="Rechercher..." id="searchUsers">
+                    <button class="btn btn-primary btn-sm"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Utilisateur</th>
+                            <th>Email</th>
+                            <th>Rôle</th>
+                            <th>Inscrit le</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                <i class="fas fa-spinner fa-spin me-2"></i> Chargement des utilisateurs...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================================
+    SCRIPTS
+    ============================================ -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../../js/admin.js"></script>
+    
+    <script>
+        // ============================================
+        // AFFICHAGE DE LA DATE
+        // ============================================
+        const dateElement = document.getElementById('currentDate');
+        if (dateElement) {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            dateElement.textContent = now.toLocaleDateString('fr-FR', options);
+        }
+
+        // ============================================
+        // DÉCONNEXION ADMIN
+        // ============================================
+        document.getElementById('logoutAdmin')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '../login.html';
+        });
+
+        // ============================================
+        // RECHERCHE D'UTILISATEURS
+        // ============================================
+        document.getElementById('searchUsers')?.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#usersTableBody tr');
+            rows.forEach(row => {
+                if (row.cells) {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

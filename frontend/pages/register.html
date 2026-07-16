@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer un compte - VoyageReservation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="bi bi-airplane"></i> VoyageReservation
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="reservation.html">Réservation</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page d'inscription -->
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-success text-white text-center py-3">
+                        <h4 class="mb-0">
+                            <i class="bi bi-person-plus"></i> Créer un compte
+                        </h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Message d'alerte -->
+                        <div id="registerAlert" class="alert d-none" role="alert"></div>
+
+                        <!-- Indicateur de progression -->
+                        <div class="progress mb-4" style="height: 5px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: 33%" id="progressBar"></div>
+                        </div>
+
+                        <!-- Formulaire d'inscription -->
+                        <form id="registerForm" novalidate>
+                            <!-- Étape 1: Informations personnelles -->
+                            <div id="step1">
+                                <h6 class="mb-3">Étape 1/3 - Informations personnelles</h6>
+                                
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">
+                                        <i class="bi bi-person"></i> Nom d'utilisateur
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="username" 
+                                           placeholder="ex: jean_dupont" 
+                                           required
+                                           minlength="3">
+                                    <div class="invalid-feedback">
+                                        Le nom d'utilisateur doit contenir au moins 3 caractères
+                                    </div>
+                                    <div class="valid-feedback">
+                                        Nom d'utilisateur valide
+                                    </div>
+                                    <small class="text-muted">Uniquement des lettres, chiffres et underscores</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="fullName" class="form-label">
+                                        <i class="bi bi-person-badge"></i> Nom complet
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="fullName" 
+                                           placeholder="Jean Dupont">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="registerEmail" class="form-label">
+                                        <i class="bi bi-envelope"></i> Email
+                                    </label>
+                                    <input type="email" 
+                                           class="form-control" 
+                                           id="registerEmail" 
+                                           placeholder="exemple@email.com" 
+                                           required>
+                                    <div class="invalid-feedback">
+                                        Veuillez entrer un email valide
+                                    </div>
+                                    <div class="valid-feedback">
+                                        Email valide
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn btn-primary w-100" id="step1Next">
+                                    Suivant <i class="bi bi-arrow-right"></i>
+                                </button>
+                            </div>
+
+                            <!-- Étape 2: Mot de passe -->
+                            <div id="step2" style="display: none;">
+                                <h6 class="mb-3">Étape 2/3 - Sécurité</h6>
+
+                                <div class="mb-3">
+                                    <label for="registerPassword" class="form-label">
+                                        <i class="bi bi-lock"></i> Mot de passe
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="password" 
+                                               class="form-control" 
+                                               id="registerPassword" 
+                                               placeholder="Minimum 6 caractères" 
+                                               required
+                                               minlength="6">
+                                        <button class="btn btn-outline-secondary" 
+                                                type="button" 
+                                                id="toggleRegisterPassword">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Le mot de passe doit contenir au moins 6 caractères
+                                    </div>
+                                    <!-- Indicateur de force du mot de passe -->
+                                    <div class="mt-2">
+                                        <div class="progress" style="height: 5px;">
+                                            <div class="progress-bar" role="progressbar" 
+                                                 style="width: 0%" id="passwordStrength"></div>
+                                        </div>
+                                        <small class="text-muted" id="passwordStrengthText">
+                                            Force du mot de passe
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="confirmPassword" class="form-label">
+                                        <i class="bi bi-shield-lock"></i> Confirmer le mot de passe
+                                    </label>
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="confirmPassword" 
+                                           placeholder="Confirmez votre mot de passe" 
+                                           required>
+                                    <div class="invalid-feedback">
+                                        Les mots de passe ne correspondent pas
+                                    </div>
+                                    <div class="valid-feedback">
+                                        Les mots de passe correspondent
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2 d-flex">
+                                    <button type="button" class="btn btn-outline-secondary flex-fill" id="step2Back">
+                                        <i class="bi bi-arrow-left"></i> Retour
+                                    </button>
+                                    <button type="button" class="btn btn-primary flex-fill" id="step2Next">
+                                        Suivant <i class="bi bi-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Étape 3: Confirmation -->
+                            <div id="step3" style="display: none;">
+                                <h6 class="mb-3">Étape 3/3 - Confirmation</h6>
+
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i>
+                                    Vérifiez vos informations avant de créer votre compte
+                                </div>
+
+                                <div class="mb-3">
+                                    <p><strong>Nom d'utilisateur:</strong> <span id="confirmUsername"></span></p>
+                                    <p><strong>Nom complet:</strong> <span id="confirmFullName"></span></p>
+                                    <p><strong>Email:</strong> <span id="confirmEmail"></span></p>
+                                </div>
+
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="termsCheck" required>
+                                    <label class="form-check-label" for="termsCheck">
+                                        J'accepte les 
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">
+                                            conditions d'utilisation
+                                        </a>
+                                        et la 
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">
+                                            politique de confidentialité
+                                        </a>
+                                    </label>
+                                    <div class="invalid-feedback">
+                                        Vous devez accepter les conditions
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2 d-flex">
+                                    <button type="button" class="btn btn-outline-secondary flex-fill" id="step3Back">
+                                        <i class="bi bi-arrow-left"></i> Retour
+                                    </button>
+                                    <button type="submit" class="btn btn-success flex-fill" id="registerSubmitBtn">
+                                        <span id="registerSubmitText">Créer mon compte</span>
+                                        <span id="registerSubmitSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <hr class="my-4">
+
+                        <div class="text-center">
+                            <p class="mb-0">
+                                Déjà un compte ? 
+                                <a href="login.html" class="text-primary fw-bold">
+                                    Se connecter
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals pour les conditions -->
+    <div class="modal fade" id="termsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Conditions d'utilisation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>1. Acceptation des conditions</h6>
+                    <p>En utilisant notre service, vous acceptez ces conditions...</p>
+                    <h6>2. Utilisation du service</h6>
+                    <p>Vous vous engagez à utiliser le service de manière responsable...</p>
+                    <h6>3. Réservations</h6>
+                    <p>Les réservations sont soumises à disponibilité...</p>
+                    <h6>4. Annulations</h6>
+                    <p>Les annulations doivent être faites au moins 24h à l'avance...</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">J'ai compris</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="privacyModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Politique de confidentialité</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Collecte des données</h6>
+                    <p>Nous collectons les données nécessaires à la gestion de vos réservations...</p>
+                    <h6>Utilisation des données</h6>
+                    <p>Vos données sont utilisées uniquement pour le traitement de vos réservations...</p>
+                    <h6>Protection des données</h6>
+                    <p>Nous mettons en place des mesures de sécurité pour protéger vos données...</p>
+                    <h6>Vos droits</h6>
+                    <p>Vous pouvez accéder, modifier ou supprimer vos données à tout moment...</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">J'ai compris</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/auth.js"></script>
+</body>
+</html>
