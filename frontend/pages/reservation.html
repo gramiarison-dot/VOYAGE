@@ -7,23 +7,227 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../css/style.css">
+    <style>
+        /* ============================================
+           STYLES DES SIÈGES
+           ============================================ */
+        .seat-container {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 10px;
+            padding: 20px 15px;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .seat {
+            aspect-ratio: 1 / 1;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: #e9ecef;
+            color: #6c757d;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            min-width: 35px;
+            min-height: 35px;
+        }
+
+        .seat:hover:not(.reserved):not(.selected) {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+            background: #667eea;
+            color: #fff;
+        }
+
+        .seat i {
+            font-size: 1rem;
+            margin-bottom: 1px;
+        }
+
+        .seat .seat-number {
+            font-size: 0.6rem;
+            opacity: 0.8;
+        }
+
+        /* État disponible */
+        .seat.available {
+            background: #e9ecef;
+            color: #495057;
+            border: 2px solid #dee2e6;
+        }
+
+        /* État sélectionné */
+        .seat.selected {
+            background: linear-gradient(135deg, #00b894, #00cec9) !important;
+            color: #fff !important;
+            border-color: #00b894 !important;
+            transform: scale(1.08);
+            box-shadow: 0 4px 15px rgba(0, 184, 148, 0.4);
+        }
+
+        /* État réservé */
+        .seat.reserved {
+            background: #e17055 !important;
+            color: #fff !important;
+            cursor: not-allowed;
+            opacity: 0.7;
+            border-color: #e17055 !important;
+        }
+
+        .seat.reserved i {
+            color: #fff;
+        }
+
+        /* Couloir (après la 4ème colonne) */
+        .seat.aisle {
+            margin-right: 20px;
+        }
+
+        /* Légende */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+            padding: 10px 0 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: #2d3436;
+        }
+
+        .legend-item .color-box {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 2px solid #dee2e6;
+        }
+
+        .legend-item .color-box.available { background: #e9ecef; }
+        .legend-item .color-box.selected { background: #00b894; border-color: #00b894; }
+        .legend-item .color-box.reserved { background: #e17055; border-color: #e17055; }
+
+        /* Cabine */
+        .cabin {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 15px;
+            border: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .cabin .cabin-label {
+            text-align: center;
+            color: #adb5bd;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 4px;
+            padding: 5px 0;
+        }
+
+        /* Tags sièges sélectionnés */
+        .seat-tag {
+            display: inline-block;
+            background: #00b894;
+            color: #fff;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin: 3px;
+        }
+
+        .seat-tag i {
+            margin-right: 4px;
+        }
+
+        .selected-seats-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 12px 18px;
+            margin-top: 15px;
+            border: 1px solid #e9ecef;
+            min-height: 50px;
+        }
+
+        /* Responsive */
+        @media (max-width: 576px) {
+            .seat-container {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 6px;
+                padding: 10px;
+            }
+            .seat {
+                font-size: 0.55rem;
+                min-width: 28px;
+                min-height: 28px;
+            }
+            .seat i {
+                font-size: 0.8rem;
+            }
+            .seat .seat-number {
+                font-size: 0.5rem;
+            }
+            .seat.aisle {
+                margin-right: 10px;
+            }
+        }
+
+        @media (min-width: 577px) and (max-width: 768px) {
+            .seat-container {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+    </style>
 </head>
 <body>
+
+    <!-- ============================================
+    NAVIGATION
+    ============================================ -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="index.html">
                 <i class="bi bi-airplane"></i> VoyageReservation
             </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="reservation.html">Réservation</a></li>
+                    <li class="nav-item" id="historique-nav" style="display: none;"><a class="nav-link" href="historique.html">Historique</a></li>
+                    <li class="nav-item" id="admin-nav" style="display: none;"><a class="nav-link" href="admin/dashboard.html">Admin</a></li>
+                    <li class="nav-item" id="auth-nav"><a class="nav-link" href="login.html"><i class="bi bi-box-arrow-in-right"></i> Connexion</a></li>
+                    <li class="nav-item" id="register-nav"><a class="nav-link" href="register.html"><i class="bi bi-person-plus"></i> S'inscrire</a></li>
+                    <li class="nav-item" id="user-nav" style="display: none;"><span class="nav-link text-white"><i class="bi bi-person-circle"></i> <span id="usernameDisplay"></span></span></li>
+                    <li class="nav-item" id="logout-nav" style="display: none;"><a class="nav-link" href="#" id="logoutBtn"><i class="bi bi-box-arrow-right"></i> Déconnexion</a></li>
+                </ul>
+            </div>
         </div>
     </nav>
 
-    <div class="container py-5">
-        <h1 class="text-center mb-4">Réservation de voyage</h1>
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
+    <!-- ============================================
+    CONTENU PRINCIPAL
+    ============================================ -->
+    <div class="container py-4">
+        <div class="row">
+            <!-- Colonne gauche -->
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white">
-                        <h5><i class="bi bi-ticket"></i> Informations de réservation</h5>
+                        <h5 class="mb-0"><i class="bi bi-search"></i> Choisissez votre voyage</h5>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
@@ -33,38 +237,405 @@
                             </select>
                         </div>
                         <div id="voyage-details" style="display: none;">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <p><strong>Destination:</strong> <span id="dest-detail"></span></p>
-                                    <p><strong>Départ:</strong> <span id="depart-detail"></span></p>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <small class="text-muted">Destination</small>
+                                    <p class="fw-bold" id="dest-detail">-</p>
                                 </div>
-                                <div class="col-md-6">
-                                    <p><strong>Date départ:</strong> <span id="date-depart-detail"></span></p>
-                                    <p><strong>Prix:</strong> <span id="prix-detail"></span> FCFA</p>
+                                <div class="col-6">
+                                    <small class="text-muted">Départ</small>
+                                    <p class="fw-bold" id="depart-detail">-</p>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">Date départ</small>
+                                    <p class="fw-bold" id="date-depart-detail">-</p>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">Prix / place</small>
+                                    <p class="fw-bold text-success" id="prix-detail">0 FCFA</p>
                                 </div>
                             </div>
                         </div>
-                        <form id="reservation-form">
-                            <div class="mb-3">
-                                <label for="nombre-places" class="form-label">Nombre de places</label>
-                                <input type="number" class="form-control" id="nombre-places" min="1" value="1" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Montant total</label>
-                                <h4 id="montant-total">0 FCFA</h4>
-                            </div>
-                            <button type="submit" class="btn btn-success w-100">
-                                <i class="bi bi-check-circle"></i> Confirmer la réservation
-                            </button>
-                        </form>
+                        <div id="voyage-place-info" style="display: none;" class="mt-2">
+                            <span class="badge bg-info" id="places-disponibles">Places disponibles: 32</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Résumé -->
+                <div class="card shadow-sm mt-3">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-check-circle"></i> Résumé</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="reservation-summary">
+                            <p class="text-muted mb-0">Aucun siège sélectionné</p>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                            <span>Nombre de places:</span>
+                            <strong id="selected-count">0</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <span>Montant total:</span>
+                            <strong class="text-success" id="montant-total">0 FCFA</strong>
+                        </div>
+                        <button type="button" class="btn btn-success w-100 mt-3" id="confirm-reservation-btn" disabled>
+                            <i class="bi bi-check-circle"></i> Confirmer la réservation
+                        </button>
                         <div id="reservation-message" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colonne droite : Sièges -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-grid-3x3-gap-fill"></i> Sélectionnez vos sièges (32 places)</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Légende -->
+                        <div class="legend">
+                            <span class="legend-item"><span class="color-box available"></span> Disponible</span>
+                            <span class="legend-item"><span class="color-box selected"></span> Sélectionné</span>
+                            <span class="legend-item"><span class="color-box reserved"></span> Réservé</span>
+                        </div>
+
+                        <!-- Cabine -->
+                        <div class="cabin">
+                            <div class="cabin-label">⬆ AVANT</div>
+                            <div class="seat-container" id="seat-container">
+                                <!-- Généré par JavaScript -->
+                            </div>
+                            <div class="cabin-label">⬇ ARRIÈRE</div>
+                        </div>
+
+                        <!-- Sièges sélectionnés -->
+                        <div class="selected-seats-info" id="selected-seats-info">
+                            <strong><i class="bi bi-ticket"></i> Sièges sélectionnés:</strong>
+                            <span id="selected-seats-list" class="text-muted">Aucun</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- ============================================
+    SCRIPTS
+    ============================================ -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../js/main.js"></script>
+    <script>
+        // ============================================
+        // CONFIGURATION
+        // ============================================
+        const API_URL = 'http://localhost:5000/api';
+        let selectedSeats = [];
+        let currentVoyage = null;
+        let voyagePrice = 0;
+        const TOTAL_SEATS = 32;
+
+        // ============================================
+        // GÉNÉRATION DES SIÈGES (32 places)
+        // ============================================
+        function generateSeats() {
+            const container = document.getElementById('seat-container');
+            if (!container) {
+                console.error('❌ seat-container non trouvé');
+                return;
+            }
+            container.innerHTML = '';
+
+            // 4 rangées x 8 colonnes = 32 sièges
+            const rows = 4;
+            const cols = 8;
+
+            // Sièges réservés (simulation)
+            const reservedSeats = [2, 5, 10, 15, 20, 25, 30];
+
+            for (let i = 0; i < TOTAL_SEATS; i++) {
+                const seatId = i + 1;
+                const row = Math.floor(i / cols) + 1;
+                const col = (i % cols) + 1;
+
+                const seat = document.createElement('button');
+                seat.className = 'seat available';
+                seat.dataset.seatId = seatId;
+                seat.dataset.row = row;
+                seat.dataset.col = col;
+
+                // Siège réservé ?
+                if (reservedSeats.includes(seatId)) {
+                    seat.classList.add('reserved');
+                    seat.disabled = true;
+                }
+
+                // Couloir après la 4ème colonne
+                if (col === 4) {
+                    seat.classList.add('aisle');
+                }
+
+                // Icône + numéro
+                const icon = document.createElement('i');
+                icon.className = 'bi bi-chair';
+                seat.appendChild(icon);
+
+                const number = document.createElement('span');
+                number.className = 'seat-number';
+                number.textContent = seatId;
+                seat.appendChild(number);
+
+                // Événement click
+                seat.addEventListener('click', function() {
+                    toggleSeat(this);
+                });
+
+                container.appendChild(seat);
+            }
+
+            console.log('✅ 32 sièges générés');
+            updateUI();
+        }
+
+        // ============================================
+        // GESTION DES SIÈGES
+        // ============================================
+        function toggleSeat(seatElement) {
+            if (seatElement.classList.contains('reserved')) return;
+
+            const seatId = parseInt(seatElement.dataset.seatId);
+
+            if (seatElement.classList.contains('selected')) {
+                seatElement.classList.remove('selected');
+                selectedSeats = selectedSeats.filter(id => id !== seatId);
+            } else {
+                seatElement.classList.add('selected');
+                selectedSeats.push(seatId);
+            }
+
+            updateUI();
+        }
+
+        // ============================================
+        // MISE À JOUR UI
+        // ============================================
+        function updateUI() {
+            const count = selectedSeats.length;
+            const total = count * voyagePrice;
+
+            document.getElementById('selected-count').textContent = count;
+            document.getElementById('montant-total').textContent = total + ' FCFA';
+
+            const confirmBtn = document.getElementById('confirm-reservation-btn');
+            confirmBtn.disabled = count === 0;
+
+            // Liste des sièges sélectionnés
+            const list = document.getElementById('selected-seats-list');
+            if (count === 0) {
+                list.textContent = 'Aucun';
+                list.className = 'text-muted';
+            } else {
+                list.innerHTML = selectedSeats.map(id =>
+                    `<span class="seat-tag"><i class="bi bi-chair"></i> ${id}</span>`
+                ).join('');
+                list.className = '';
+            }
+
+            // Résumé
+            const summary = document.getElementById('reservation-summary');
+            if (count === 0) {
+                summary.innerHTML = '<p class="text-muted mb-0">Aucun siège sélectionné</p>';
+            } else {
+                summary.innerHTML = `
+                    <p class="mb-0">
+                        <strong>${count}</strong> siège${count > 1 ? 's' : ''} sélectionné${count > 1 ? 's' : ''}
+                        <br>
+                        <span class="text-success">${total} FCFA</span>
+                    </p>
+                `;
+            }
+
+            // Mettre à jour les places disponibles
+            const totalSeats = document.querySelectorAll('.seat:not(.reserved)').length;
+            const available = totalSeats - selectedSeats.length;
+            const placesInfo = document.getElementById('places-disponibles');
+            if (placesInfo) {
+                placesInfo.textContent = `Places disponibles: ${available}`;
+            }
+        }
+
+        // ============================================
+        // CHARGEMENT DES VOYAGES
+        // ============================================
+        async function loadVoyages() {
+            try {
+                const response = await fetch(`${API_URL}/reservations/voyages`);
+                if (!response.ok) throw new Error('Erreur API');
+                const voyages = await response.json();
+
+                const select = document.getElementById('voyage-select');
+                select.innerHTML = '<option value="">Sélectionnez un voyage</option>';
+
+                voyages.forEach(v => {
+                    const option = document.createElement('option');
+                    option.value = v.id;
+                    option.textContent = `${v.destination} - ${v.depart} (${v.date_depart}) - ${v.prix} FCFA`;
+                    option.dataset.voyage = JSON.stringify(v);
+                    select.appendChild(option);
+                });
+
+                select.addEventListener('change', function() {
+                    const selected = this.options[this.selectedIndex];
+                    if (this.value && selected.dataset.voyage) {
+                        currentVoyage = JSON.parse(selected.dataset.voyage);
+                        showVoyageDetails(currentVoyage);
+                    } else {
+                        document.getElementById('voyage-details').style.display = 'none';
+                        document.getElementById('voyage-place-info').style.display = 'none';
+                        currentVoyage = null;
+                        voyagePrice = 0;
+                        resetSeats();
+                    }
+                });
+
+                console.log('✅ Voyages chargés:', voyages.length);
+            } catch (error) {
+                console.error('❌ Erreur chargement voyages:', error);
+            }
+        }
+
+        // ============================================
+        // AFFICHAGE DÉTAILS VOYAGE
+        // ============================================
+        function showVoyageDetails(voyage) {
+            document.getElementById('voyage-details').style.display = 'block';
+            document.getElementById('voyage-place-info').style.display = 'block';
+
+            document.getElementById('dest-detail').textContent = voyage.destination;
+            document.getElementById('depart-detail').textContent = voyage.depart;
+            document.getElementById('date-depart-detail').textContent = voyage.date_depart;
+            document.getElementById('prix-detail').textContent = voyage.prix + ' FCFA';
+
+            voyagePrice = voyage.prix;
+            document.getElementById('places-disponibles').textContent = `Places disponibles: ${voyage.places_disponibles}`;
+
+            resetSeats();
+            updateReservedSeats(voyage);
+            updateUI();
+        }
+
+        // ============================================
+        // RÉINITIALISATION
+        // ============================================
+        function resetSeats() {
+            selectedSeats = [];
+            document.querySelectorAll('.seat.selected').forEach(seat => {
+                seat.classList.remove('selected');
+            });
+            updateUI();
+        }
+
+        // ============================================
+        // SIÈGES RÉSERVÉS (simulation)
+        // ============================================
+        function updateReservedSeats(voyage) {
+            document.querySelectorAll('.seat').forEach(seat => {
+                seat.classList.remove('reserved');
+                seat.disabled = false;
+            });
+
+            // Simulation (à remplacer par les données réelles plus tard)
+            const reservedSeats = [2, 5, 10, 15, 20, 25, 30];
+            reservedSeats.forEach(id => {
+                const seat = document.querySelector(`.seat[data-seat-id="${id}"]`);
+                if (seat) {
+                    seat.classList.add('reserved');
+                    seat.disabled = true;
+                }
+            });
+        }
+
+        // ============================================
+        // CONFIRMATION RÉSERVATION
+        // ============================================
+        document.getElementById('confirm-reservation-btn').addEventListener('click', async function() {
+            const token = localStorage.getItem('token');
+            const messageDiv = document.getElementById('reservation-message');
+
+            if (!token) {
+                messageDiv.innerHTML = `<div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i> Veuillez vous connecter pour réserver</div>`;
+                return;
+            }
+
+            if (!currentVoyage) {
+                messageDiv.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Veuillez sélectionner un voyage</div>`;
+                return;
+            }
+
+            if (selectedSeats.length === 0) {
+                messageDiv.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Veuillez sélectionner au moins un siège</div>`;
+                return;
+            }
+
+            const nombrePlaces = selectedSeats.length;
+
+            try {
+                const response = await fetch(`${API_URL}/reservations/reservations`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        voyage_id: currentVoyage.id,
+                        nombre_places: nombrePlaces
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    messageDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle"></i> ${data.message}
+                            <br><strong>Sièges réservés:</strong> ${selectedSeats.join(', ')}
+                            <br><strong>Montant total:</strong> ${data.montant_total || (nombrePlaces * voyagePrice)} FCFA
+                        </div>
+                    `;
+
+                    // Marquer les sièges comme réservés
+                    selectedSeats.forEach(id => {
+                        const seat = document.querySelector(`.seat[data-seat-id="${id}"]`);
+                        if (seat) {
+                            seat.classList.remove('selected');
+                            seat.classList.add('reserved');
+                            seat.disabled = true;
+                        }
+                    });
+                    selectedSeats = [];
+                    updateUI();
+
+                    const placesInfo = document.getElementById('places-disponibles');
+                    const currentAvailable = parseInt(placesInfo.textContent.match(/\d+/)?.[0] || 0);
+                    placesInfo.textContent = `Places disponibles: ${currentAvailable - nombrePlaces}`;
+
+                } else {
+                    messageDiv.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> ${data.message || 'Erreur lors de la réservation'}</div>`;
+                }
+            } catch (error) {
+                messageDiv.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Erreur de connexion au serveur</div>`;
+            }
+        });
+
+        // ============================================
+        // INITIALISATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ DOM chargé - Génération des sièges...');
+            generateSeats();
+            loadVoyages();
+        });
+    </script>
 </body>
 </html>

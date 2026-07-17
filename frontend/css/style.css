@@ -50,3 +50,179 @@ footer {
 .navbar {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
+
+
+/* ============================================
+   STYLES DES SIÈGES
+   ============================================ */
+.seat-container {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 10px;
+    padding: 20px 10px;
+}
+
+.seat {
+    aspect-ratio: 1 / 1;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    background: #e9ecef;
+    color: #6c757d;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    position: relative;
+}
+
+.seat:hover:not(.reserved) {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.seat i {
+    font-size: 1.1rem;
+    margin-bottom: 1px;
+}
+
+.seat .seat-number {
+    font-size: 0.6rem;
+    opacity: 0.8;
+}
+
+/* État disponible */
+.seat.available {
+    background: #e9ecef;
+    color: #495057;
+    border: 2px solid #dee2e6;
+}
+
+.seat.available:hover {
+    background: #667eea;
+    color: #fff;
+    border-color: #667eea;
+}
+
+/* État sélectionné */
+.seat.selected {
+    background: linear-gradient(135deg, #00b894, #00cec9);
+    color: #fff;
+    border-color: #00b894;
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 184, 148, 0.4);
+}
+
+/* État réservé */
+.seat.reserved {
+    background: #e17055;
+    color: #fff;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.seat.reserved i {
+    color: #fff;
+}
+
+/* Couloir */
+.seat.aisle {
+    margin-right: 20px;
+}
+
+/* Légende */
+.legend {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    padding: 10px 0 20px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #2d3436;
+}
+
+.legend-item .color-box {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 2px solid #dee2e6;
+}
+
+.legend-item .color-box.available { background: #e9ecef; }
+.legend-item .color-box.selected { background: #00b894; border-color: #00b894; }
+.legend-item .color-box.reserved { background: #e17055; border-color: #e17055; }
+
+/* Cabine */
+.cabin {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 15px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    border: 1px solid rgba(0,0,0,0.04);
+}
+
+.cabin::before {
+    content: "⬆ AVANT";
+    display: block;
+    text-align: center;
+    color: #adb5bd;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 4px;
+    padding-bottom: 8px;
+}
+
+.cabin::after {
+    content: "⬇ ARRIÈRE";
+    display: block;
+    text-align: center;
+    color: #adb5bd;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 4px;
+    padding-top: 8px;
+}
+
+/* Tags des sièges sélectionnés */
+.seat-tag {
+    display: inline-block;
+    background: #00b894;
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin: 3px;
+}
+
+.seat-tag i {
+    margin-right: 4px;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .seat-container {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        padding: 10px;
+    }
+    .seat {
+        font-size: 0.6rem;
+    }
+    .seat i {
+        font-size: 0.8rem;
+    }
+    .seat .seat-number {
+        font-size: 0.5rem;
+    }
+}

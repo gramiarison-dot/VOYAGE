@@ -7,27 +7,398 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../css/style.css">
+    <style>
+        body { background: #f0f2f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .navbar { box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .card { border-radius: 15px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: none; }
+        .card-header { border-radius: 15px 15px 0 0 !important; }
+        .table thead { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; }
+        .table thead th { padding: 15px; font-weight: 600; border: none; }
+        .table tbody td { padding: 15px; vertical-align: middle; }
+        .table tbody tr { transition: all 0.3s ease; }
+        .table tbody tr:hover { background: rgba(102, 126, 234, 0.04); }
+        .badge { padding: 6px 14px; border-radius: 20px; font-weight: 500; }
+        .badge-confirmed { background: #00b894; color: #fff; }
+        .badge-pending { background: #fdcb6e; color: #2d3436; }
+        .badge-cancelled { background: #e17055; color: #fff; }
+        .btn-action { width: 35px; height: 35px; border-radius: 8px; border: none; transition: all 0.3s ease; }
+        .btn-action:hover { transform: scale(1.1); }
+        .btn-action.confirm { background: rgba(0, 184, 148, 0.1); color: #00b894; }
+        .btn-action.confirm:hover { background: #00b894; color: #fff; }
+        .btn-action.cancel { background: rgba(225, 112, 85, 0.1); color: #e17055; }
+        .btn-action.cancel:hover { background: #e17055; color: #fff; }
+        .empty-state { text-align: center; padding: 60px 20px; }
+        .empty-state i { font-size: 4rem; color: #b2bec3; }
+        .empty-state h4 { margin-top: 20px; color: #2d3436; }
+        .empty-state p { color: #b2bec3; }
+        .stat-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        @media (max-width: 768px) { .table { font-size: 0.85rem; } }
+    </style>
 </head>
 <body>
+
+    <!-- ============================================
+    NAVIGATION
+    ============================================ -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="index.html">
                 <i class="bi bi-airplane"></i> VoyageReservation
             </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="reservation.html">Réservation</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="historique.html">Historique</a></li>
+                    <li class="nav-item" id="admin-nav" style="display: none;"><a class="nav-link" href="admin/dashboard.html">Admin</a></li>
+                    <li class="nav-item" id="auth-nav"><a class="nav-link" href="login.html"><i class="bi bi-box-arrow-in-right"></i> Connexion</a></li>
+                    <li class="nav-item" id="register-nav"><a class="nav-link" href="register.html"><i class="bi bi-person-plus"></i> S'inscrire</a></li>
+                    <li class="nav-item" id="user-nav" style="display: none;">
+                        <span class="nav-link text-white"><i class="bi bi-person-circle"></i> <span id="usernameDisplay"></span></span>
+                    </li>
+                    <li class="nav-item" id="logout-nav" style="display: none;">
+                        <a class="nav-link" href="#" id="logoutBtn"><i class="bi bi-box-arrow-right"></i> Déconnexion</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 
+    <!-- ============================================
+    CONTENU PRINCIPAL
+    ============================================ -->
     <div class="container py-5">
-        <h1 class="text-center mb-4">Mon historique de réservations</h1>
-        <div id="historique-content">
-            <div class="text-center text-muted">
-                <i class="bi bi-hourglass-split fs-1"></i>
-                <p>Chargement de l'historique...</p>
+        <div class="row">
+            <div class="col-12">
+                <!-- En-tête -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h2 fw-bold text-primary">
+                        <i class="bi bi-clock-history"></i> Mon historique de réservations
+                    </h1>
+                    <span class="badge bg-primary" id="totalCount">0 réservation(s)</span>
+                </div>
+
+                <!-- Card -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white border-0 py-3">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h5 class="mb-0"><i class="bi bi-list-ul"></i> Liste des réservations</h5>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex gap-2 justify-content-md-end">
+                                    <button class="btn btn-outline-primary btn-sm" id="refreshBtn">
+                                        <i class="bi bi-arrow-clockwise"></i> Rafraîchir
+                                    </button>
+                                    <a href="reservation.html" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-plus-circle"></i> Nouvelle réservation
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Zone de chargement -->
+                        <div id="loadingSpinner" class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Chargement...</span>
+                            </div>
+                            <p class="mt-2 text-muted">Chargement de vos réservations...</p>
+                        </div>
+
+                        <!-- Contenu de l'historique -->
+                        <div id="historique-content" style="display: none;">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="historiqueTable">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Destination</th>
+                                            <th>Départ</th>
+                                            <th>Date</th>
+                                            <th>Places</th>
+                                            <th>Montant</th>
+                                            <th>Statut</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="historiqueTableBody">
+                                        <!-- Rempli par JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Message si aucune réservation -->
+                        <div id="emptyState" style="display: none;">
+                            <div class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                <h4>Aucune réservation trouvée</h4>
+                                <p>Vous n'avez pas encore effectué de réservation.</p>
+                                <a href="reservation.html" class="btn btn-primary mt-3">
+                                    <i class="bi bi-plus-circle"></i> Réserver maintenant
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Message d'erreur -->
+                        <div id="errorState" style="display: none;">
+                            <div class="empty-state">
+                                <i class="bi bi-exclamation-triangle text-danger"></i>
+                                <h4 class="text-danger">Erreur de chargement</h4>
+                                <p id="errorMessage">Impossible de charger vos réservations.</p>
+                                <button class="btn btn-outline-primary mt-3" onclick="loadHistorique()">
+                                    <i class="bi bi-arrow-clockwise"></i> Réessayer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- ============================================
+    SCRIPTS
+    ============================================ -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../js/main.js"></script>
+
+    <script>
+        // ============================================
+        // CONFIGURATION
+        // ============================================
+        const API_URL = 'http://localhost:5000/api';
+
+        // ============================================
+        // CHARGEMENT DE L'HISTORIQUE
+        // ============================================
+        async function loadHistorique() {
+            console.log('🔄 Chargement de l\'historique...');
+
+            // Récupérer le token
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+
+            // Vérifier l'authentification
+            if (!token || !user) {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('errorState').style.display = 'block';
+                document.getElementById('errorMessage').textContent = 'Veuillez vous connecter pour voir votre historique.';
+                return;
+            }
+
+            // Afficher le spinner
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('historique-content').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'none';
+
+            try {
+                // Appel API
+                const response = await fetch(`${API_URL}/reservations/reservations`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                console.log('📡 Réponse API:', response.status);
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        // Token expiré
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('user');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    throw new Error(`Erreur ${response.status}: ${response.statusText}`);
+                }
+
+                const reservations = await response.json();
+                console.log('📦 Données reçues:', reservations);
+
+                // Cacher le spinner
+                document.getElementById('loadingSpinner').style.display = 'none';
+
+                if (reservations.length === 0) {
+                    document.getElementById('emptyState').style.display = 'block';
+                    document.getElementById('totalCount').textContent = '0 réservation(s)';
+                    return;
+                }
+
+                // Afficher le tableau
+                document.getElementById('historique-content').style.display = 'block';
+                document.getElementById('totalCount').textContent = `${reservations.length} réservation(s)`;
+
+                // Remplir le tableau
+                const tbody = document.getElementById('historiqueTableBody');
+                tbody.innerHTML = '';
+
+                reservations.forEach((r, index) => {
+                    const statusClass = {
+                        'confirmee': 'badge-confirmed',
+                        'en_attente': 'badge-pending',
+                        'annulee': 'badge-cancelled'
+                    }[r.statut] || 'badge-pending';
+
+                    const statusLabel = {
+                        'confirmee': '✅ Confirmée',
+                        'en_attente': '⏳ En attente',
+                        'annulee': '❌ Annulée'
+                    }[r.statut] || r.statut;
+
+                    // Actions selon le statut
+                    let actions = '';
+                    if (r.statut === 'en_attente') {
+                        actions = `
+                            <button class="btn-action confirm" onclick="confirmerReservation(${r.id})" title="Confirmer">
+                                <i class="bi bi-check-lg"></i>
+                            </button>
+                            <button class="btn-action cancel" onclick="annulerReservation(${r.id})" title="Annuler">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        `;
+                    } else if (r.statut === 'confirmee') {
+                        actions = `
+                            <button class="btn-action cancel" onclick="annulerReservation(${r.id})" title="Annuler">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        `;
+                    } else {
+                        actions = `<span class="text-muted"><i class="bi bi-dash-circle"></i></span>`;
+                    }
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td><strong>${r.destination || 'N/A'}</strong></td>
+                        <td>${r.depart || 'N/A'}</td>
+                        <td>${r.date_depart ? new Date(r.date_depart).toLocaleDateString('fr-FR') : 'N/A'}</td>
+                        <td>${r.nombre_places}</td>
+                        <td><strong>${r.montant_total || 0} FCFA</strong></td>
+                        <td><span class="badge ${statusClass}">${statusLabel}</span></td>
+                        <td>${actions}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('❌ Erreur:', error);
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('errorState').style.display = 'block';
+                document.getElementById('errorMessage').textContent = error.message || 'Impossible de charger vos réservations.';
+            }
+        }
+
+        // ============================================
+        // CONFIRMER UNE RÉSERVATION
+        // ============================================
+        async function confirmerReservation(id) {
+            if (!confirm('✅ Confirmer cette réservation ?')) return;
+
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`${API_URL}/reservations/reservations/${id}/confirm`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('✅ Réservation confirmée avec succès !');
+                    loadHistorique(); // Recharger
+                } else {
+                    alert('❌ Erreur: ' + (data.message || 'Impossible de confirmer'));
+                }
+            } catch (error) {
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        // ============================================
+        // ANNULER UNE RÉSERVATION
+        // ============================================
+        async function annulerReservation(id) {
+            if (!confirm('⚠️ Annuler cette réservation ? Cette action est irréversible.')) return;
+
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`${API_URL}/reservations/reservations/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('🗑️ Réservation annulée avec succès !');
+                    loadHistorique(); // Recharger
+                } else {
+                    alert('❌ Erreur: ' + (data.message || 'Impossible d\'annuler'));
+                }
+            } catch (error) {
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        // ============================================
+        // DÉCONNEXION
+        // ============================================
+        document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        });
+
+        // ============================================
+        // RAFRAÎCHIR
+        // ============================================
+        document.getElementById('refreshBtn')?.addEventListener('click', function() {
+            loadHistorique();
+        });
+
+        // ============================================
+        // AUTHENTIFICATION - AFFICHAGE USER
+        // ============================================
+        function updateUIForAuthenticatedUser(user) {
+            document.getElementById('auth-nav').style.display = 'none';
+            document.getElementById('register-nav').style.display = 'none';
+            document.getElementById('user-nav').style.display = 'block';
+            document.getElementById('logout-nav').style.display = 'block';
+            document.getElementById('usernameDisplay').textContent = user.username;
+            if (user.role === 'admin') {
+                document.getElementById('admin-nav').style.display = 'block';
+            }
+        }
+
+        // ============================================
+        // INITIALISATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ historique.html chargé');
+
+            const user = localStorage.getItem('user');
+            if (user) {
+                try {
+                    const userData = JSON.parse(user);
+                    updateUIForAuthenticatedUser(userData);
+                } catch (e) {
+                    console.error('Erreur parsing user:', e);
+                }
+            }
+
+            // Charger l'historique
+            loadHistorique();
+        });
+    </script>
 </body>
 </html>

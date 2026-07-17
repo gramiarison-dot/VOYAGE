@@ -3,62 +3,318 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VoyageReservation - Accueil</title>
+    <title>VoyageReservation - Madagascar</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
     <style>
-        .hero-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 80px 0;
-            color: white;
-        }
-        .card {
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
-        }
+        /* ============================================
+           STYLES GLOBAUX
+           ============================================ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f0f2f5; }
+
+        /* ============================================
+           NAVIGATION
+           ============================================ */
         .navbar {
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            padding: 12px 0;
         }
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
+        .navbar-brand { font-weight: 800; font-size: 1.5rem; }
+        .navbar-brand i { color: #4fc3f7; }
+        .navbar-brand span { color: #4fc3f7; }
+        .nav-link { font-weight: 500; transition: all 0.3s ease; }
+        .nav-link:hover { color: #4fc3f7 !important; transform: translateY(-2px); }
+
+        /* ============================================
+           HERO SECTION - CARTE DE MADAGASCAR
+           ============================================ */
+        .hero-section {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+            padding: 60px 0 40px;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
         }
-        .btn-primary:hover {
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(79, 195, 247, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .hero-section h1 { font-weight: 900; font-size: 3.2rem; }
+        .hero-section h1 i { color: #4fc3f7; }
+        .hero-section .subtitle { color: rgba(255,255,255,0.7); font-size: 1.1rem; }
+
+        /* Carte de Madagascar SVG */
+        .map-container {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            transition: all 0.5s ease;
+        }
+        .map-container:hover {
             transform: scale(1.02);
-            background: linear-gradient(135deg, #5a6fd6 0%, #6a4292 100%);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
-        footer {
-            background: #2c3e50;
-            color: white;
-            padding: 20px 0;
+        .map-container svg { width: 100%; height: auto; max-height: 350px; }
+        .map-container .province { cursor: pointer; transition: all 0.3s ease; }
+        .map-container .province:hover { opacity: 0.8; transform: scale(1.02); }
+        .map-container .province-label { fill: #fff; font-size: 12px; font-weight: 700; text-anchor: middle; pointer-events: none; }
+
+        /* Stats sur la carte */
+        .map-stats { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-top: 15px; }
+        .map-stat { text-align: center; padding: 10px 20px; background: rgba(255,255,255,0.06); border-radius: 12px; min-width: 80px; }
+        .map-stat .number { font-size: 1.5rem; font-weight: 800; color: #4fc3f7; }
+        .map-stat .label { font-size: 0.7rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* ============================================
+           PROVINCES - GRILLE
+           ============================================ */
+        .section-title {
+            font-weight: 800;
+            color: #1a1a2e;
+            position: relative;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 4px;
+        }
+
+        .province-card {
+            border: none;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            background: #fff;
+            height: 100%;
+            cursor: pointer;
+            position: relative;
+        }
+        .province-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .province-card .card-header-custom {
+            padding: 20px 20px 15px;
+            color: #fff;
+            position: relative;
+        }
+        .province-card .card-header-custom .province-icon {
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .province-card .card-header-custom h5 {
+            font-weight: 700;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+        .province-card .card-header-custom .capital {
+            font-size: 0.75rem;
+            opacity: 0.85;
+            font-weight: 400;
+        }
+
+        .province-card .card-body {
+            padding: 15px 20px 20px;
+        }
+        .province-card .card-body .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+            font-size: 0.85rem;
+        }
+        .province-card .card-body .info-row:last-child { border-bottom: none; }
+        .province-card .card-body .info-row .label { color: #6c757d; }
+        .province-card .card-body .info-row .value { font-weight: 600; color: #1a1a2e; }
+
+        .province-card .card-footer-custom {
+            padding: 12px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid rgba(0,0,0,0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .province-card .card-footer-custom .distance {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        .province-card .card-footer-custom .distance i { color: #4fc3f7; }
+        .province-card .card-footer-custom .btn-reserve {
+            padding: 5px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+        }
+        .province-card .card-footer-custom .btn-reserve:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Couleurs des provinces */
+        .bg-province-1 { background: linear-gradient(135deg, #FF6B6B, #EE5A24); }
+        .bg-province-2 { background: linear-gradient(135deg, #4ECDC4, #1ABC9C); }
+        .bg-province-3 { background: linear-gradient(135deg, #45B7D1, #0984E3); }
+        .bg-province-4 { background: linear-gradient(135deg, #FDCB6E, #F39C12); }
+        .bg-province-5 { background: linear-gradient(135deg, #A29BFE, #6C5CE7); }
+        .bg-province-6 { background: linear-gradient(135deg, #FD79A8, #E84393); }
+
+        /* ============================================
+           VOYAGES ACTIFS
+           ============================================ */
+        .voyage-card {
+            border: none;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            background: #fff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            height: 100%;
+        }
+        .voyage-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+        }
+        .voyage-card .voyage-img {
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #fff;
+            position: relative;
+        }
+        .voyage-card .voyage-img .badge-status {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #fff;
+        }
+        .voyage-card .voyage-img .badge-status.active { background: rgba(0, 184, 148, 0.9); }
+        .voyage-card .voyage-body { padding: 18px 20px; }
+        .voyage-card .voyage-body h5 { font-weight: 700; margin-bottom: 8px; }
+        .voyage-card .voyage-body .meta { font-size: 0.85rem; color: #6c757d; }
+        .voyage-card .voyage-body .meta i { width: 20px; color: #667eea; }
+        .voyage-card .voyage-footer {
+            padding: 12px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid rgba(0,0,0,0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .voyage-card .voyage-footer .price { font-weight: 700; color: #00b894; font-size: 1.1rem; }
+        .voyage-card .voyage-footer .btn-book {
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+        }
+        .voyage-card .voyage-footer .btn-book:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* ============================================
+           STATISTIQUES
+           ============================================ */
+        .stats-section {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            padding: 50px 0;
+            color: #fff;
+            border-radius: 30px;
+            margin: 30px 0;
+        }
+        .stats-section .stat-item { text-align: center; }
+        .stats-section .stat-item .number { font-size: 2.5rem; font-weight: 800; color: #4fc3f7; }
+        .stats-section .stat-item .label { font-size: 0.85rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer {
+            background: linear-gradient(135deg, #1a1a2e, #0f3460);
+            color: rgba(255,255,255,0.7);
+            padding: 30px 0;
             margin-top: 40px;
+        }
+        .footer a { color: rgba(255,255,255,0.5); text-decoration: none; transition: all 0.3s ease; }
+        .footer a:hover { color: #4fc3f7; }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 992px) {
+            .hero-section h1 { font-size: 2.2rem; }
+            .map-container { padding: 10px; }
+            .map-container svg { max-height: 200px; }
+        }
+        @media (max-width: 768px) {
+            .hero-section { padding: 30px 0; }
+            .hero-section h1 { font-size: 1.8rem; }
+            .map-stats .map-stat { padding: 5px 12px; }
+            .map-stats .map-stat .number { font-size: 1.1rem; }
+            .stats-section .stat-item .number { font-size: 1.8rem; }
+        }
+        @media (max-width: 576px) {
+            .hero-section h1 { font-size: 1.5rem; }
+            .province-card .card-header-custom .province-icon { font-size: 1.8rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+
+    <!-- ============================================
+    NAVIGATION
+    ============================================ -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="index.html">
-                <i class="bi bi-airplane"></i> VoyageReservation
+                <i class="bi bi-airplane-fill"></i> Voyage<span>Madagascar</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="index.html">Accueil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="reservation.html">Réservation</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link active" href="index.html">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="reservation.html">Réservation</a></li>
                     <li class="nav-item" id="historique-nav" style="display: none;">
                         <a class="nav-link" href="historiques.html">Historique</a>
                     </li>
@@ -66,82 +322,93 @@
                         <a class="nav-link" href="admin/dashboard.html">Admin</a>
                     </li>
                     <li class="nav-item" id="auth-nav">
-                        <a class="nav-link" href="login.html">
-                            <i class="bi bi-box-arrow-in-right"></i> Connexion
-                        </a>
+                        <a class="nav-link" href="login.html"><i class="bi bi-box-arrow-in-right"></i> Connexion</a>
                     </li>
                     <li class="nav-item" id="register-nav">
-                        <a class="nav-link" href="registerr.html">
-                            <i class="bi bi-person-plus"></i> S'inscrire
-                        </a>
+                        <a class="nav-link" href="register.html"><i class="bi bi-person-plus"></i> S'inscrire</a>
                     </li>
                     <li class="nav-item" id="user-nav" style="display: none;">
-                        <span class="nav-link text-white">
-                            <i class="bi bi-person-circle"></i> <span id="usernameDisplay"></span>
-                        </span>
+                        <span class="nav-link text-white"><i class="bi bi-person-circle"></i> <span id="usernameDisplay"></span></span>
                     </li>
                     <li class="nav-item" id="logout-nav" style="display: none;">
-                        <a class="nav-link" href="#" id="logoutBtn">
-                            <i class="bi bi-box-arrow-right"></i> Déconnexion
-                        </a>
+                        <a class="nav-link" href="#" id="logoutBtn"><i class="bi bi-box-arrow-right"></i> Déconnexion</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <header class="hero-section text-center">
+    <!-- ============================================
+    HERO SECTION - CARTE MADAGASCAR
+    ============================================ -->
+    <section class="hero-section">
         <div class="container">
-            <h1 class="display-4 fw-bold">Réservez votre prochain voyage</h1>
-            <p class="lead">Découvrez des destinations incroyables et réservez en quelques clics</p>
-            <a href="reservation.html" class="btn btn-light btn-lg mt-3">
-                <i class="bi bi-search"></i> Réserver maintenant
-            </a>
-        </div>
-    </header>
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h1>
+                        <i class="bi bi-geo-alt"></i> Explorez<br>
+                        <span style="color:#4fc3f7;">Madagascar</span> en toute simplicité
+                    </h1>
+                    <p class="subtitle">
+                        Réservez vos voyages entre les 6 provinces de l'île rouge.
+                        Découvrez des paysages uniques, des cultures riches et des kilomètres d'aventure.
+                    </p>
+                    <a href="reservation.html" class="btn btn-light btn-lg mt-3">
+                        <i class="bi bi-search"></i> Réserver maintenant
+                    </a>
+                </div>
+                <div class="col-lg-6">
+                    <div class="map-container">
+                        <!-- Carte SVG simplifiée de Madagascar -->
+                        <svg viewBox="0 0 400 450" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Contour de Madagascar -->
+                            <polygon points="200,20 240,50 270,90 280,140 260,190 250,220 240,260 250,300 260,340 250,380 230,410 200,430 170,410 150,380 140,340 150,300 160,260 150,220 140,190 120,140 130,90 160,50" fill="rgba(79,195,247,0.15)" stroke="#4fc3f7" stroke-width="2"/>
 
-    <!-- Destinations populaires -->
-    <section class="py-5">
-        <div class="container">
-            <h2 class="text-center mb-4">Destinations populaires</h2>
-            <div class="row" id="voyages-list">
-                <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">Paris</h5>
-                            <p class="card-text">
-                                <i class="bi bi-geo-alt"></i> Départ: Dakar<br>
-                                <i class="bi bi-calendar"></i> 15/08/2026<br>
-                                <i class="bi bi-tag"></i> 250 000 FCFA
-                            </p>
-                            <a href="reservation.html" class="btn btn-primary">Réserver</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">New York</h5>
-                            <p class="card-text">
-                                <i class="bi bi-geo-alt"></i> Départ: Dakar<br>
-                                <i class="bi bi-calendar"></i> 20/08/2026<br>
-                                <i class="bi bi-tag"></i> 500 000 FCFA
-                            </p>
-                            <a href="reservation.html" class="btn btn-primary">Réserver</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">Dubai</h5>
-                            <p class="card-text">
-                                <i class="bi bi-geo-alt"></i> Départ: Dakar<br>
-                                <i class="bi bi-calendar"></i> 01/09/2026<br>
-                                <i class="bi bi-tag"></i> 300 000 FCFA
-                            </p>
-                            <a href="reservation.html" class="btn btn-primary">Réserver</a>
+                            <!-- Provinces -->
+                            <!-- DIANA (Antsiranana) -->
+                            <polygon points="180,50 200,40 220,50 210,70 200,80 185,75 175,65" fill="rgba(255,107,107,0.6)" stroke="#FF6B6B" stroke-width="1.5" class="province" onclick="selectProvince('DIANA')"/>
+                            <text x="195" y="65" class="province-label" font-size="8">DIANA</text>
+
+                            <!-- SAVA (Sambava) -->
+                            <polygon points="225,70 240,80 235,100 220,105 210,95 215,80" fill="rgba(78,205,196,0.6)" stroke="#4ECDC4" stroke-width="1.5" class="province" onclick="selectProvince('SAVA')"/>
+                            <text x="225" y="90" class="province-label" font-size="7">SAVA</text>
+
+                            <!-- ALAOTRA-MANGORO (Toamasina) -->
+                            <polygon points="205,110 230,120 235,140 220,150 200,145 195,130" fill="rgba(69,183,209,0.6)" stroke="#45B7D1" stroke-width="1.5" class="province" onclick="selectProvince('ALAOTRA')"/>
+                            <text x="210" y="135" class="province-label" font-size="7">ALAOTRA</text>
+
+                            <!-- ANALAMANGA (Antananarivo) -->
+                            <polygon points="160,150 180,140 200,145 195,170 175,175 160,165" fill="rgba(253,203,110,0.6)" stroke="#FDCB6E" stroke-width="1.5" class="province" onclick="selectProvince('ANALAMANGA')"/>
+                            <text x="175" y="160" class="province-label" font-size="7">ANALA</text>
+
+                            <!-- ATSIMO-ATsinanana (Fianarantsoa) -->
+                            <polygon points="150,200 170,190 185,210 175,230 155,225 145,210" fill="rgba(162,155,254,0.6)" stroke="#A29BFE" stroke-width="1.5" class="province" onclick="selectProvince('ATSIMO')"/>
+                            <text x="160" y="212" class="province-label" font-size="7">ATSIMO</text>
+
+                            <!-- ANDROY (Toliara) -->
+                            <polygon points="140,260 160,250 175,270 165,295 150,290 135,275" fill="rgba(253,121,168,0.6)" stroke="#FD79A8" stroke-width="1.5" class="province" onclick="selectProvince('ANDROY')"/>
+                            <text x="155" y="275" class="province-label" font-size="7">ANDROY</text>
+
+                            <!-- Légende -->
+                            <circle cx="20" cy="400" r="4" fill="#FF6B6B"/><text x="30" y="405" font-size="8" fill="rgba(255,255,255,0.7)">DIANA</text>
+                            <circle cx="20" cy="415" r="4" fill="#4ECDC4"/><text x="30" y="420" font-size="8" fill="rgba(255,255,255,0.7)">SAVA</text>
+                            <circle cx="20" cy="430" r="4" fill="#45B7D1"/><text x="30" y="435" font-size="8" fill="rgba(255,255,255,0.7)">ALAOTRA</text>
+                        </svg>
+
+                        <!-- Stats -->
+                        <div class="map-stats">
+                            <div class="map-stat">
+                                <div class="number">6</div>
+                                <div class="label">Provinces</div>
+                            </div>
+                            <div class="map-stat">
+                                <div class="number">12+</div>
+                                <div class="label">Voyages actifs</div>
+                            </div>
+                            <div class="map-stat">
+                                <div class="number">2 500+</div>
+                                <div class="label">Km parcourus</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -149,14 +416,388 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer>
+    <!-- ============================================
+    STATISTIQUES
+    ============================================ -->
+    <div class="container">
+        <div class="stats-section">
+            <div class="row">
+                <div class="col-4 col-md-2 stat-item">
+                    <div class="number">6</div>
+                    <div class="label">Provinces</div>
+                </div>
+                <div class="col-4 col-md-2 stat-item">
+                    <div class="number">22</div>
+                    <div class="label">Villes</div>
+                </div>
+                <div class="col-4 col-md-2 stat-item">
+                    <div class="number">12</div>
+                    <div class="label">Destinations</div>
+                </div>
+                <div class="col-4 col-md-2 stat-item">
+                    <div class="number">45</div>
+                    <div class="label">Voyages</div>
+                </div>
+                <div class="col-4 col-md-2 stat-item">
+                    <div class="number">1 200</div>
+                    <div class="label">Clients</div>
+                </div>
+                <div class="col-4 col-md-2 stat-item">
+                    <div class="number">4.8 ★</div>
+                    <div class="label">Avis</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+    PROVINCES DE MADAGASCAR
+    ============================================ -->
+    <section class="py-4">
+        <div class="container">
+            <h2 class="section-title"><i class="bi bi-pin-map" style="color:#667eea;"></i> Les 6 Provinces de Madagascar</h2>
+            <p class="text-muted mb-4">Explorez chaque province, découvrez ses spécificités et réservez votre voyage.</p>
+
+            <div class="row g-4">
+                <!-- Province 1: DIANA -->
+                <div class="col-md-4 col-lg-3">
+                    <div class="province-card" onclick="selectProvince('DIANA')">
+                        <div class="card-header-custom bg-province-1">
+                            <span class="province-icon"><i class="bi bi-umbrella"></i></span>
+                            <h5>DIANA</h5>
+                            <span class="capital">Capitale: Antsiranana</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-row"><span class="label">Villes principales</span><span class="value">Antsiranana, Ambilobe</span></div>
+                            <div class="info-row"><span class="label">Superficie</span><span class="value">19 266 km²</span></div>
+                            <div class="info-row"><span class="label">Spécialité</span><span class="value">Plages, Montagnes</span></div>
+                        </div>
+                        <div class="card-footer-custom">
+                            <span class="distance"><i class="bi bi-signpost"></i> 1 200 km</span>
+                            <button class="btn-reserve">Réserver</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Province 2: SAVA -->
+                <div class="col-md-4 col-lg-3">
+                    <div class="province-card" onclick="selectProvince('SAVA')">
+                        <div class="card-header-custom bg-province-2">
+                            <span class="province-icon"><i class="bi bi-tree"></i></span>
+                            <h5>SAVA</h5>
+                            <span class="capital">Capitale: Sambava</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-row"><span class="label">Villes principales</span><span class="value">Sambava, Antalaha</span></div>
+                            <div class="info-row"><span class="label">Superficie</span><span class="value">25 518 km²</span></div>
+                            <div class="info-row"><span class="label">Spécialité</span><span class="value">Vanille, Forêts</span></div>
+                        </div>
+                        <div class="card-footer-custom">
+                            <span class="distance"><i class="bi bi-signpost"></i> 800 km</span>
+                            <button class="btn-reserve">Réserver</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Province 3: ALAOTRA-MANGORO -->
+                <div class="col-md-4 col-lg-3">
+                    <div class="province-card" onclick="selectProvince('ALAOTRA')">
+                        <div class="card-header-custom bg-province-3">
+                            <span class="province-icon"><i class="bi bi-water"></i></span>
+                            <h5>ALAOTRA</h5>
+                            <span class="capital">Capitale: Toamasina</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-row"><span class="label">Villes principales</span><span class="value">Toamasina, Moramanga</span></div>
+                            <div class="info-row"><span class="label">Superficie</span><span class="value">31 948 km²</span></div>
+                            <div class="info-row"><span class="label">Spécialité</span><span class="value">Lac, Port</span></div>
+                        </div>
+                        <div class="card-footer-custom">
+                            <span class="distance"><i class="bi bi-signpost"></i> 450 km</span>
+                            <button class="btn-reserve">Réserver</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Province 4: ANALAMANGA -->
+                <div class="col-md-4 col-lg-3">
+                    <div class="province-card" onclick="selectProvince('ANALAMANGA')">
+                        <div class="card-header-custom bg-province-4">
+                            <span class="province-icon"><i class="bi bi-building"></i></span>
+                            <h5>ANALAMANGA</h5>
+                            <span class="capital">Capitale: Antananarivo</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-row"><span class="label">Villes principales</span><span class="value">Antananarivo, Ambohimanga</span></div>
+                            <div class="info-row"><span class="label">Superficie</span><span class="value">16 911 km²</span></div>
+                            <div class="info-row"><span class="label">Spécialité</span><span class="value">Culture, Collines</span></div>
+                        </div>
+                        <div class="card-footer-custom">
+                            <span class="distance"><i class="bi bi-signpost"></i> 0 km</span>
+                            <button class="btn-reserve">Réserver</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Province 5: ATSIMO-ATSINANANA -->
+                <div class="col-md-4 col-lg-3">
+                    <div class="province-card" onclick="selectProvince('ATSIMO')">
+                        <div class="card-header-custom bg-province-5">
+                            <span class="province-icon"><i class="bi bi-mountain"></i></span>
+                            <h5>ATSIMO</h5>
+                            <span class="capital">Capitale: Fianarantsoa</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-row"><span class="label">Villes principales</span><span class="value">Fianarantsoa, Manakara</span></div>
+                            <div class="info-row"><span class="label">Superficie</span><span class="value">28 568 km²</span></div>
+                            <div class="info-row"><span class="label">Spécialité</span><span class="value">Thé, Montagnes</span></div>
+                        </div>
+                        <div class="card-footer-custom">
+                            <span class="distance"><i class="bi bi-signpost"></i> 600 km</span>
+                            <button class="btn-reserve">Réserver</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Province 6: ANDROY -->
+                <div class="col-md-4 col-lg-3">
+                    <div class="province-card" onclick="selectProvince('ANDROY')">
+                        <div class="card-header-custom bg-province-6">
+                            <span class="province-icon"><i class="bi bi-sun"></i></span>
+                            <h5>ANDROY</h5>
+                            <span class="capital">Capitale: Toliara</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-row"><span class="label">Villes principales</span><span class="value">Toliara, Taolagnaro</span></div>
+                            <div class="info-row"><span class="label">Superficie</span><span class="value">40 141 km²</span></div>
+                            <div class="info-row"><span class="label">Spécialité</span><span class="value">Plages, Désert</span></div>
+                        </div>
+                        <div class="card-footer-custom">
+                            <span class="distance"><i class="bi bi-signpost"></i> 900 km</span>
+                            <button class="btn-reserve">Réserver</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+    VOYAGES ACTIFS
+    ============================================ -->
+    <section class="py-4">
+        <div class="container">
+            <h2 class="section-title"><i class="bi bi-airplane" style="color:#00b894;"></i> Voyages actifs</h2>
+            <p class="text-muted mb-4">Découvrez les voyages disponibles vers les différentes provinces.</p>
+
+            <div class="row g-4" id="voyages-list">
+                <!-- Voyage 1: Tana -> DIANA -->
+                <div class="col-md-4 col-lg-3">
+                    <div class="voyage-card">
+                        <div class="voyage-img" style="background:linear-gradient(135deg,#FF6B6B,#EE5A24);">
+                            <i class="bi bi-umbrella"></i>
+                            <span class="badge-status active">✈️ Actif</span>
+                        </div>
+                        <div class="voyage-body">
+                            <h5>Antananarivo → Antsiranana</h5>
+                            <div class="meta"><i class="bi bi-geo-alt"></i> DIANA</div>
+                            <div class="meta"><i class="bi bi-clock"></i> Durée: 2h30</div>
+                            <div class="meta"><i class="bi bi-signpost"></i> Distance: 1 200 km</div>
+                        </div>
+                        <div class="voyage-footer">
+                            <span class="price">250 000 FCFA</span>
+                            <button class="btn-book" onclick="window.location.href='reservation.html'">Réserver</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Voyage 2: Tana -> SAVA -->
+                <div class="col-md-4 col-lg-3">
+                    <div class="voyage-card">
+                        <div class="voyage-img" style="background:linear-gradient(135deg,#4ECDC4,#1ABC9C);">
+                            <i class="bi bi-tree"></i>
+                            <span class="badge-status active">✈️ Actif</span>
+                        </div>
+                        <div class="voyage-body">
+                            <h5>Antananarivo → Sambava</h5>
+                            <div class="meta"><i class="bi bi-geo-alt"></i> SAVA</div>
+                            <div class="meta"><i class="bi bi-clock"></i> Durée: 1h45</div>
+                            <div class="meta"><i class="bi bi-signpost"></i> Distance: 800 km</div>
+                        </div>
+                        <div class="voyage-footer">
+                            <span class="price">180 000 FCFA</span>
+                            <button class="btn-book" onclick="window.location.href='reservation.html'">Réserver</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Voyage 3: Tana -> ALAOTRA -->
+                <div class="col-md-4 col-lg-3">
+                    <div class="voyage-card">
+                        <div class="voyage-img" style="background:linear-gradient(135deg,#45B7D1,#0984E3);">
+                            <i class="bi bi-water"></i>
+                            <span class="badge-status active">✈️ Actif</span>
+                        </div>
+                        <div class="voyage-body">
+                            <h5>Antananarivo → Toamasina</h5>
+                            <div class="meta"><i class="bi bi-geo-alt"></i> ALAOTRA</div>
+                            <div class="meta"><i class="bi bi-clock"></i> Durée: 1h</div>
+                            <div class="meta"><i class="bi bi-signpost"></i> Distance: 450 km</div>
+                        </div>
+                        <div class="voyage-footer">
+                            <span class="price">120 000 FCFA</span>
+                            <button class="btn-book" onclick="window.location.href='reservation.html'">Réserver</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Voyage 4: Tana -> ATSIMO -->
+                <div class="col-md-4 col-lg-3">
+                    <div class="voyage-card">
+                        <div class="voyage-img" style="background:linear-gradient(135deg,#A29BFE,#6C5CE7);">
+                            <i class="bi bi-mountain"></i>
+                            <span class="badge-status active">✈️ Actif</span>
+                        </div>
+                        <div class="voyage-body">
+                            <h5>Antananarivo → Fianarantsoa</h5>
+                            <div class="meta"><i class="bi bi-geo-alt"></i> ATSIMO</div>
+                            <div class="meta"><i class="bi bi-clock"></i> Durée: 1h15</div>
+                            <div class="meta"><i class="bi bi-signpost"></i> Distance: 600 km</div>
+                        </div>
+                        <div class="voyage-footer">
+                            <span class="price">150 000 FCFA</span>
+                            <button class="btn-book" onclick="window.location.href='reservation.html'">Réserver</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Voyage 5: Tana -> ANDROY -->
+                <div class="col-md-4 col-lg-3">
+                    <div class="voyage-card">
+                        <div class="voyage-img" style="background:linear-gradient(135deg,#FD79A8,#E84393);">
+                            <i class="bi bi-sun"></i>
+                            <span class="badge-status active">✈️ Actif</span>
+                        </div>
+                        <div class="voyage-body">
+                            <h5>Antananarivo → Toliara</h5>
+                            <div class="meta"><i class="bi bi-geo-alt"></i> ANDROY</div>
+                            <div class="meta"><i class="bi bi-clock"></i> Durée: 2h</div>
+                            <div class="meta"><i class="bi bi-signpost"></i> Distance: 900 km</div>
+                        </div>
+                        <div class="voyage-footer">
+                            <span class="price">200 000 FCFA</span>
+                            <button class="btn-book" onclick="window.location.href='reservation.html'">Réserver</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Voyage 6: DIANA -> ANDROY -->
+                <div class="col-md-4 col-lg-3">
+                    <div class="voyage-card">
+                        <div class="voyage-img" style="background:linear-gradient(135deg,#FF6B6B,#FD79A8);">
+                            <i class="bi bi-arrows"></i>
+                            <span class="badge-status active">✈️ Actif</span>
+                        </div>
+                        <div class="voyage-body">
+                            <h5>Antsiranana → Toliara</h5>
+                            <div class="meta"><i class="bi bi-geo-alt"></i> DIANA → ANDROY</div>
+                            <div class="meta"><i class="bi bi-clock"></i> Durée: 3h</div>
+                            <div class="meta"><i class="bi bi-signpost"></i> Distance: 2 100 km</div>
+                        </div>
+                        <div class="voyage-footer">
+                            <span class="price">350 000 FCFA</span>
+                            <button class="btn-book" onclick="window.location.href='reservation.html'">Réserver</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+    FOOTER
+    ============================================ -->
+    <footer class="footer">
         <div class="container text-center">
-            <p>&copy; 2026 VoyageReservation. Tous droits réservés.</p>
+            <div class="row">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <h6 class="text-white fw-bold"><i class="bi bi-airplane-fill" style="color:#4fc3f7;"></i> VoyageMadagascar</h6>
+                    <p class="small">Explorez l'île rouge en toute simplicité.</p>
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <h6 class="text-white fw-bold">Liens rapides</h6>
+                    <a href="index.html" class="d-block small">Accueil</a>
+                    <a href="reservation.html" class="d-block small">Réservation</a>
+                    <a href="historique.html" class="d-block small">Historique</a>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="text-white fw-bold">Suivez-nous</h6>
+                    <a href="#" class="me-2"><i class="bi bi-facebook" style="color:#4fc3f7;"></i></a>
+                    <a href="#" class="me-2"><i class="bi bi-instagram" style="color:#4fc3f7;"></i></a>
+                    <a href="#" class="me-2"><i class="bi bi-twitter-x" style="color:#4fc3f7;"></i></a>
+                    <a href="#"><i class="bi bi-youtube" style="color:#4fc3f7;"></i></a>
+                </div>
+            </div>
+            <hr class="border-secondary">
+            <p class="small mb-0">&copy; 2026 VoyageMadagascar. Tous droits réservés.</p>
         </div>
     </footer>
 
+    <!-- ============================================
+    SCRIPTS
+    ============================================ -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/main.js"></script>
+
+    <script>
+        // ============================================
+        // SÉLECTION D'UNE PROVINCE
+        // ============================================
+        function selectProvince(province) {
+            const names = {
+                'DIANA': 'DIANA (Antsiranana)',
+                'SAVA': 'SAVA (Sambava)',
+                'ALAOTRA': 'ALAOTRA-MANGORO (Toamasina)',
+                'ANALAMANGA': 'ANALAMANGA (Antananarivo)',
+                'ATSIMO': 'ATSIMO-ATSINANANA (Fianarantsoa)',
+                'ANDROY': 'ANDROY (Toliara)'
+            };
+            alert(`🌍 Province sélectionnée: ${names[province] || province}\n\nRedirection vers la page de réservation...`);
+            window.location.href = 'reservation.html';
+        }
+
+        // ============================================
+        // AUTHENTIFICATION - AFFICHAGE USER
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = localStorage.getItem('user');
+            if (user) {
+                try {
+                    const userData = JSON.parse(user);
+                    document.getElementById('auth-nav').style.display = 'none';
+                    document.getElementById('register-nav').style.display = 'none';
+                    document.getElementById('user-nav').style.display = 'block';
+                    document.getElementById('logout-nav').style.display = 'block';
+                    document.getElementById('usernameDisplay').textContent = userData.username;
+                    if (userData.role === 'admin') {
+                        document.getElementById('admin-nav').style.display = 'block';
+                    }
+                    document.getElementById('historique-nav').style.display = 'block';
+                } catch (e) {
+                    console.error('Erreur parsing user:', e);
+                }
+            }
+        });
+
+        // ============================================
+        // DÉCONNEXION
+        // ============================================
+        document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        });
+    </script>
 </body>
 </html>
