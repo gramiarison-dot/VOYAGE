@@ -115,7 +115,9 @@ app.get('/api/test', (req, res) => {
         uptime: process.uptime()
     });
 });
-
+// Dans server.js, remplacer les routes API
+app.use('/api/reservations', require('./backend/routes/demoRoutes')); // Utiliser demoRoutes
+// OU garder les deux avec un fallback
 // Routes API - Auth
 app.use('/api/auth', require('./backend/routes/authRoutes'));
 
