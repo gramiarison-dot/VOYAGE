@@ -1,44 +1,24 @@
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
-// Configuration du pool MySQL
-let pool = null;
-
-// Vérifier si nous avons des variables de base de données
-const hasDbVars = process.env.DB_HOST || process.env.MYSQLHOST;
-
-if (hasDbVars) {
-    try {
-        pool = mysql.createPool({
-            host: process.env.DB_HOST || process.env.MYSQLHOST || 'localhost',
-            port: parseInt(process.env.DB_PORT || process.env.MYSQLPORT || '3306'),
-            user: process.env.DB_USER || process.env.MYSQLUSER || 'root',
-            password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || '',
-            database: process.env.DB_NAME || process.env.MYSQL_DATABASE || 'voyage_reservation',
-            waitForConnections: true,
-            connectionLimit: 5,
-            queueLimit: 0,
-            connectTimeout: 10000,
-            ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false
-        });
-        console.log('✅ Pool MySQL créé avec succès');
-    } catch (error) {
-        console.warn('⚠️ Erreur de création du pool MySQL:', error.message);
-        pool = null;
-    }
-} else {
-    console.log('ℹ️ Aucune variable de base de données trouvée. Mode démo activé.');
-}
+// Configuration pour Railway (utilise les variables MYSQL_*)
+const pool = mysql.createPool({
+    host: process.env.MYSQLHOST || 'localhost',
+    port: parseInt(process.env.MYSQLPORT || '3306'),
+    user: process.env.MYSQLUSER || 'root',
+    password: process.env.MYSQLPASSWORD || '',
+    database: process.env.MYSQL_DATABASE || 'voyage_reservation',
+    waitForConnections: true,
+    connectionLimit: 5,
+    queueLimit: 0,
+    ssl: false
+});
 
 async function testConnection() {
-    if (!pool) {
-        console.log('ℹ️ Mode démo: base de données non configurée');
-        return false;
-    }
     try {
         const connection = await pool.getConnection();
         console.log('✅ Connexion à MySQL réussie !');
-        console.log(`📊 Base de données: ${process.env.DB_NAME || 'railway'}`);
+        console.log(`📊 Base de données: ${process.env.MYSQL_DATABASE || 'voyage_reservation'}`);
         connection.release();
         return true;
     } catch (error) {
@@ -47,8 +27,4 @@ async function testConnection() {
     }
 }
 
-module.exports = {
-    pool,
-    testConnection,
-    isConnected: () => pool !== null
-};
+module.exports = { pool, testConnection };
