@@ -120,7 +120,7 @@ app.get('/api/test', (req, res) => {
 app.use('/api/auth', require('./backend/routes/authRoutes'));
 
 // Routes API - Réservations
-app.use('/api/reservations', require('./backend/routes/reservationRoutes'));
+app.use('/api/reservations', require('./backend/routes/reservationsRoutes'));
 
 // Routes API - Admin
 app.use('/api/admin', require('./backend/routes/adminRoutes'));
